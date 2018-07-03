@@ -1,0 +1,10 @@
+---
+- hosts: localhost
+  connection: local
+  roles:
+    - role: indigo-dc.galaxycloud-tools
+      GALAXY_VERSION: 'release_17.05'
+      galaxy_flavor: 'galaxy-GDC_Somatic_Variant'
+      move_datasets: false
+      Galaxy_flavor_recipe_branch: 'master'
+      #create_bootstrap_user: true
