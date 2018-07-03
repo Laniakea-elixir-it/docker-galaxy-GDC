@@ -6,7 +6,7 @@ ENV container docker
 
 COPY ["playbook.yaml","/"]
 
-RUN ansible-galaxy install indigo-dc.galaxycloud-tools,devel
+RUN ansible-galaxy install indigo_dc.galaxycloud-tools,devel
 
 RUN echo "localhost" > /etc/ansible/hosts
 

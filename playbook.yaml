@@ -2,7 +2,7 @@
 - hosts: localhost
   connection: local
   roles:
-    - role: indigo-dc.galaxycloud-tools
+    - role: indigo_dc.galaxycloud-tools
       GALAXY_VERSION: 'release_17.05'
       galaxy_flavor: 'galaxy-GDC_Somatic_Variant'
       move_datasets: false
