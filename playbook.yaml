@@ -7,7 +7,7 @@
             -c "/home/galaxy/galaxy/config/galaxy.yml"
             -s "galaxy"
             -o "brand"
-            -v "Epigen"'
+            -v "GDC Somatic Variant"'
       become_user: galaxy
       become: true
   roles:
