@@ -1,10 +1,30 @@
 ---
 - hosts: localhost
   connection: local
+  pre_tasks:
+    - command: '/home/galaxy/galaxy/.venv/bin/python
+            /usr/local/bin/parse_galaxy_yaml.py
+            -c "/home/galaxy/galaxy/config/galaxy.yml"
+            -s "galaxy"
+            -o "brand"
+            -v "Epigen"'
+      become_user: galaxy
+      become: true
   roles:
     - role: indigo-dc.galaxycloud-tools
-      GALAXY_VERSION: 'release_17.05'
+      GALAXY_VERSION: 'release_18.05'
       galaxy_flavor: 'galaxy-GDC_Somatic_Variant'
       move_datasets: false
-      Galaxy_flavor_recipe_branch: 'master'
+      galaxy_flavors_recipes_tag: 'rc2'
       #create_bootstrap_user: true
+
+    #- role: indigo-dc.galaxycloud-tooldeps
+    #  GALAXY_VERSION: 'release_18.05'
+
+    - role: indigo-dc.galaxycloud-refdata
+      get_refdata: 'true'
+      refdata_dir: '/cvmfs'
+      refdata_repository_name: 'elixir-italy.galaxy.refdata'
+      refdata_provider_type: 'cvmfs_preconfigured'
+      refdata_cvmfs_repository_name: 'elixir-italy.galaxy.refdata'
+      refdata_cvmfs_key_file: 'elixir-italy.galaxy.refdata.pub'
