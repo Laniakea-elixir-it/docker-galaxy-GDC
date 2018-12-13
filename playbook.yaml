@@ -11,12 +11,12 @@
       become_user: galaxy
       become: true
   roles:
-    - role: indigo-dc.galaxycloud-tools
-      GALAXY_VERSION: 'release_18.05'
-      galaxy_flavor: 'galaxy-GDC_Somatic_Variant'
-      move_datasets: false
-      galaxy_flavors_recipes_tag: 'rc2'
-      #create_bootstrap_user: true
+    #- role: indigo-dc.galaxycloud-tools
+    #  GALAXY_VERSION: 'release_18.05'
+    #  galaxy_flavor: 'galaxy-GDC_Somatic_Variant'
+    #  move_datasets: false
+    #  galaxy_flavors_recipes_tag: 'rc2'
+    #  #create_bootstrap_user: true
 
     #- role: indigo-dc.galaxycloud-tooldeps
     #  GALAXY_VERSION: 'release_18.05'
