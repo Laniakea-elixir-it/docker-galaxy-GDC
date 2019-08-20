@@ -1,25 +1,50 @@
-FROM laniakeacloud/galaxy:18.05
+# Galaxy - GDC Somatic Variant
 
-MAINTAINER ma.tangaro@ibiom.cnr.it
+FROM bgruening/galaxy-stable:19.01
 
-ENV container docker
+MAINTAINER Tangaro Marco Antonio, ma.tangaro@ibiom.cnr.it
 
-COPY ["playbook.yaml","/"]
+ENV GALAXY_CONFIG_BRAND="GDC Somatic Variant"
 
-RUN ansible-galaxy install indigo-dc.galaxycloud-tools
-RUN ansible-galaxy install indigo-dc.galaxycloud-tooldeps
-RUN ansible-galaxy install indigo-dc.cvmfs-client
-RUN ansible-galaxy install indigo-dc.galaxycloud-refdata
+WORKDIR /galaxy-central
 
-# Download refdata configuration file
-ADD https://raw.githubusercontent.com/indigo-dc/Reference-data-galaxycloud-repository/master/cvmfs_server_keys/elixir-italy.galaxy.refdata.pub /tmp/elixir-italy.galaxy.refdata.pub
-ADD https://raw.githubusercontent.com/indigo-dc/Reference-data-galaxycloud-repository/master/cvmfs_server_config_files/elixir-italy.galaxy.refdata.conf /tmp/elixir-italy.galaxy.refdata.conf
+RUN add-tool-shed --url 'http://testtoolshed.g2.bx.psu.edu/' --name 'Test Tool Shed'
 
-RUN echo "localhost" > /etc/ansible/hosts
+RUN wget https://raw.githubusercontent.com/indigo-dc/Galaxy-flavors-recipes/master/galaxy-GDC_Somatic_Variant/galaxy-GDC_Somatic_Variant-tool-list-1.yml -O $GALAXY_ROOT/tools1.yaml
+RUN wget https://raw.githubusercontent.com/indigo-dc/Galaxy-flavors-recipes/master/galaxy-GDC_Somatic_Variant/galaxy-GDC_Somatic_Variant-tool-list-2.yml -O $GALAXY_ROOT/tools2.yaml
+RUN wget https://raw.githubusercontent.com/indigo-dc/Galaxy-flavors-recipes/master/galaxy-GDC_Somatic_Variant/galaxy-GDC_Somatic_Variant-tool-list-3.yml -O $GALAXY_ROOT/tools3.yaml
 
-# Install tools and configure cvmfs reference data
-RUN ansible-playbook /playbook.yaml
+RUN install-tools $GALAXY_ROOT/tools1.yaml && \
+    /tool_deps/_conda/bin/conda clean --tarballs --yes > /dev/null && \
+    rm /export/galaxy-central/ -rf
 
-# This overwrite docker-galaxy CMD line
-# Mount cvmfs and start galaxy
-CMD /bin/mount -t cvmfs elixir-italy.galaxy.refdata /cvmfs/elixir-italy.galaxy.refdata; /usr/local/bin/galaxy-startup; /usr/bin/sleep infinity
+RUN install-tools $GALAXY_ROOT/tools2.yaml && \
+    /tool_deps/_conda/bin/conda clean --tarballs --yes > /dev/null && \
+    rm /export/galaxy-central/ -rf
+
+RUN install-tools $GALAXY_ROOT/tools3.yaml && \
+    /tool_deps/_conda/bin/conda clean --tarballs --yes > /dev/null && \
+    rm /export/galaxy-central/ -rf
+
+# Install workflows
+RUN mkdir -p $GALAXY_HOME/workflows
+
+RUN wget https://raw.githubusercontent.com/indigo-dc/Galaxy-flavors-recipes/master/galaxy-GDC_Somatic_Variant/galaxy-GDC_Somatic_Variant-workflows/Galaxy-Workflow-GDC_WF.ga -O $GALAXY_HOME/workflows/Galaxy-Workflow-GDC_WF.ga
+
+RUN startup_lite && \
+    galaxy-wait && \
+    workflow-install --workflow_path $GALAXY_HOME/workflows/ -g http://localhost:8080 -u $GALAXY_DEFAULT_ADMIN_USER -p $GALAXY_DEFAULT_ADMIN_PASSWORD
+
+#TODO
+# change cvmfs setup
+
+# Mark folders as imported from the host.
+VOLUME ["/export/", "/data/", "/var/lib/docker"]
+
+# Expose port 80 (webserver), 21 (FTP server), 8800 (Proxy)
+EXPOSE :80
+EXPOSE :21
+EXPOSE :8800
+
+# Autostart script that is invoked during container start
+CMD ["/usr/bin/startup"]
