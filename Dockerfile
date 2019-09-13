@@ -31,9 +31,9 @@ RUN mkdir -p $GALAXY_HOME/workflows
 
 RUN wget https://raw.githubusercontent.com/indigo-dc/Galaxy-flavors-recipes/master/galaxy-GDC_Somatic_Variant/galaxy-GDC_Somatic_Variant-workflows/Galaxy-Workflow-GDC_WF.ga -O $GALAXY_HOME/workflows/Galaxy-Workflow-GDC_WF.ga
 
-RUN startup_lite && \
-    galaxy-wait && \
-    workflow-install --workflow_path $GALAXY_HOME/workflows/ -g http://localhost:8080 -u $GALAXY_DEFAULT_ADMIN_USER -p $GALAXY_DEFAULT_ADMIN_PASSWORD
+#RUN startup_lite && \
+#    galaxy-wait && \
+#    workflow-install --workflow_path $GALAXY_HOME/workflows/ -g http://localhost:8080 -u $GALAXY_DEFAULT_ADMIN_USER -p $GALAXY_DEFAULT_ADMIN_PASSWORD
 
 #TODO
 # change cvmfs setup
